@@ -91,6 +91,7 @@ class UserController extends Controller
         ->update([
             'name' => $request->name,
             'email' => $request->email,
+            'role_id' => $request->role_id
         ]);
     }
 

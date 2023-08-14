@@ -68,9 +68,13 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function edit($id)
+    public function softDelete($id)
     {
-        //
+        return Expense::where('id', $id)
+        ->update([
+            
+            'is_active' => 0
+        ]);
     }
 
     /**
