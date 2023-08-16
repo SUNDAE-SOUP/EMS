@@ -47,7 +47,7 @@ Route::middleware(['auth'])->controller(RoleController::class)->group(function (
 
     Route::post('/roles/store', 'store');
 
-    Route::get('/roles/{role}/edit', 'edit')->name('role.edit');
+    Route::post('/roles/{role}/edit', 'edit')->whereNumber('role')->name('role.edit');
 
     Route::get('/roles/{id}', 'show')->whereNumber('id');
 

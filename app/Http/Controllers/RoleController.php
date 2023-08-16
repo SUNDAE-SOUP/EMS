@@ -22,7 +22,7 @@ class RoleController extends Controller
 
         $roles = Role::where('is_active', 1)->get();
 
-    return view('components.admin.section.admin-roles', compact('roles'));
+        return view('components.admin.section.admin-roles', compact('roles'));
     }
 
 
@@ -61,7 +61,7 @@ class RoleController extends Controller
     public function edit(Role $role)
     {
         if ($role->id === 1) {
-            return redirect()->route('admin.roleTab')->with('warning', 'Administrator role cannot be edited.');
+            return redirect('/roles/admin-role-tab')->with('warning', 'Administrator role cannot be edited.');
         }
     
         $updateRoles = Role::where('is_active', 1)->get();

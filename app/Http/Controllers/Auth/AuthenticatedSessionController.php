@@ -48,13 +48,6 @@ class AuthenticatedSessionController extends Controller
             }
         }
         
-        /* if ($roleId == 1) {
-            return redirect()->intended(RouteServiceProvider::HOME);
-        } else {
-            return redirect()->route('auth.welcome1');
-        } */
-
-        /* return redirect()->intended(RouteServiceProvider::HOME); */
     }
 
     /**
