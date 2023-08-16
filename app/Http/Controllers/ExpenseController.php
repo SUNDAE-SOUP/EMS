@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Expense;
+use App\Models\Expense_Category;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class ExpenseController extends Controller
 {
@@ -13,6 +15,24 @@ class ExpenseController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function dashboard()
+    {
+
+        $expensesTable = Expense::all();
+
+        $expensesByCategory = Expense::selectRaw('expense_category_id, SUM(Amount) as totalAmount')
+        ->groupBy('expense_category_id')
+        ->with(['expense_category' => function ($query) {
+            $query->select('id', 'expense_category_name'); // Select only the id and name columns from the related model
+        }])
+        ->get();
+
+
+
+
+        return view('components/admin/section/admin-dashboard', compact('expensesByCategory', 'expensesTable'));
+    }
+    
     public function index()
     {
         return Expense::all();
@@ -100,8 +120,15 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy($id)
+
+    
+    // to get the total sum per expense category in the expenses table
+    public function getTotalAmountSumByCategory($category_id)
     {
-        //
+        
+        
+        return view('component/admin/section/admin-dashboard', compact('expensesByCategory'));
     }
+
+    
 }

@@ -17,7 +17,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function create()
     {
-        return view('auth.login');
+        return view('auth/login');
     }
 
     /**
@@ -32,7 +32,29 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerate();
 
-        return redirect()->intended(RouteServiceProvider::HOME);
+        $roleId = auth()->user()->role_id;
+
+        $is_active = auth()->user()->is_active;
+
+        
+
+        if ($roleId == 1) {
+            if ($is_active == 1) {
+                return redirect()->route('admin.view');
+            }
+        } else if ($roleId == 2) {
+            if ($is_active == 1) {
+                return redirect()->route('user.view');
+            }
+        }
+        
+        /* if ($roleId == 1) {
+            return redirect()->intended(RouteServiceProvider::HOME);
+        } else {
+            return redirect()->route('auth.welcome1');
+        } */
+
+        /* return redirect()->intended(RouteServiceProvider::HOME); */
     }
 
     /**
@@ -49,6 +71,6 @@ class AuthenticatedSessionController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect('/login');
     }
 }

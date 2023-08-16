@@ -1,0 +1,66 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+nav {
+    display: block;
+    position: fixed;
+    width: 100vw;
+    z-index: 1;
+}
+
+aside {
+    position: fixed;
+    
+}
+
+.sidebarMenu {
+    margin-top: 30px;
+}
+
+.appTitle {
+    margin-right: 70px;
+}
+
+.mainContent {
+    margin-top: 65px;
+}
+
+.userName {
+    font-weight: 100px;
+}
+
+ul li {
+    font-weight: 400;
+}
+
+.divTablet {
+    display: none;
+}
+
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+    .divTablet {
+        display: none;
+    }
+
+    .appTitle {
+        margin-left: 270px;
+    }
+}
+
+
+@media screen and (max-width: 767px) {
+    .appTitle {
+        margin-right: 0px;
+    }
+
+    #divTablePie {
+        display: none;
+    }
+
+    .divTablet {
+        display: block;
+    }
+}

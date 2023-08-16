@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+
 
 class Expense extends Model
 {
@@ -20,11 +23,11 @@ class Expense extends Model
 
     public function user(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(User::class, 'user_id', 'id');
     }
 
     public function expense_category(): BelongsTo
     {
-        return $this->belongsTo(Expense_Category::class, 'expense_category_id');
+        return $this->belongsTo(Expense_Category::class, 'expense_category_id', 'id');
     }
 }

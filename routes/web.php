@@ -5,7 +5,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
-
+use App\Http\Middleware\RedirectIfAuthenticated;
 
 /*
 |--------------------------------------------------------------------------
@@ -19,16 +19,18 @@ use App\Http\Controllers\ExpenseController;
 */
 
 Route::get('/', function () {
-    return view('welcome');
+    return view('auth/login')->name('loginPage');
 });
 
-Route::get('/dashboard', function () {
+/* Route::get('/dashboard', function () {
     return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+})->middleware(['auth'])->name('dashboard'); */
 
 require __DIR__.'/auth.php';
 
-Route::controller(UserController::class)->group(function () {
+
+
+Route::middleware(['auth'])->controller(UserController::class)->group(function () {
     Route::get('/users', 'index');
 
     Route::post('/users/store', 'store');
@@ -40,8 +42,8 @@ Route::controller(UserController::class)->group(function () {
     Route::put('/users/{id}/update', 'update')->whereNumber('id');
 });
 
-Route::controller(RoleController::class)->group(function () {
-    Route::get('/roles', 'index');
+Route::middleware(['auth'])->controller(RoleController::class)->group(function () {
+    Route::get('/roles/admin-role-tab', 'roleTab')->name('admin.roleTab');
 
     Route::post('/roles/store', 'store');
 
@@ -49,10 +51,10 @@ Route::controller(RoleController::class)->group(function () {
 
     Route::get('/roles/{id}/softDelete', 'softDelete')->whereNumber('id');
 
-    Route::put('/roles/{id}/update', 'update')->whereNumber('id');
+    Route::post('/roles/{id}/update', 'update')->whereNumber('id');
 });
 
-Route::controller(ExpenseCategoryController::class)->group(function () {
+Route::middleware(['auth'])->controller(ExpenseCategoryController::class)->group(function () {
     Route::get('/expenseCategories', 'index');
 
     Route::post('/expenseCategories/store', 'store');
@@ -62,8 +64,10 @@ Route::controller(ExpenseCategoryController::class)->group(function () {
     Route::put('/expenseCategories/{id}/update', 'update')->whereNumber('id');
 });
 
-Route::controller(ExpenseController::class)->group(function () {
+Route::middleware(['auth'])->controller(ExpenseController::class)->group(function () {
     Route::get('/expenses', 'index');
+
+    Route::get('/expenses/adminView', 'dashboard')->name('admin.view');
 
     Route::post('/expenses/store', 'store');
 
@@ -72,4 +76,5 @@ Route::controller(ExpenseController::class)->group(function () {
     Route::get('/expenses/{id}/softDelete', 'softDelete')->whereNumber('id');
 
     Route::put('/expenses/{id}/update', 'update')->whereNumber('id');
+
 });

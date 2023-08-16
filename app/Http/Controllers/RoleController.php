@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Role;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 
 class RoleController extends Controller
 {
@@ -12,10 +14,14 @@ class RoleController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+
+    public function roleTab()
     {
-        return Role::all();
+        $datas = Role::all();
+
+        return view('components/admin/section/admin-roles', compact('datas'));
     }
+
 
     /**
      * Show the form for creating a new resource.
@@ -41,10 +47,12 @@ class RoleController extends Controller
         ]);
 
 
-        return Role::create([
+        Role::create([
             'name' => $request->name,
             'description' => $request->description,
         ]);
+
+        return redirect('/roles/admin-role-tab');
     }
 
     /* *
@@ -81,13 +89,13 @@ class RoleController extends Controller
      */
     public function update(Request $request, $id)
     {
-        return Role::where('id', $id)
+        Role::where('id', $id)
         ->update([
             'name' => $request->name,
             'description' => $request->description,
         ]);
 
-        
+        return redirect('/roles/admin-role-tab');
     }
 
     /**
