@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="{{asset ('css/style.css') }}">
     <title>Admin Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/1.8.0/flowbite.min.css"  rel="stylesheet" />
+    @livewireStyles
 </head>
 <body>
     

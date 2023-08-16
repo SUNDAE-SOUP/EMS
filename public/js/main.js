@@ -133,7 +133,7 @@ document.addEventListener('DOMContentLoaded', function() {
   var modalNameInput = document.getElementById('modalNameInput');
   var modalDescriptionInput = document.getElementById('modalDescriptionInput');
   var modalCreatedAtInput = document.getElementById('modalCreatedAtInput');
-  var modalDataIdInput = document.getElementById('modalCreatedAtInput');
+  var modalDataIdInput = document.getElementById('modalDataIdInput');
   
 
   editButtons.forEach(function(button) {

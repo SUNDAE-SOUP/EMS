@@ -17,9 +17,12 @@ class RoleController extends Controller
 
     public function roleTab()
     {
-        $datas = Role::all();
+        
+        
 
-        return view('components/admin/section/admin-roles', compact('datas'));
+        $roles = Role::where('is_active', 1)->get();
+
+    return view('components.admin.section.admin-roles', compact('roles'));
     }
 
 
@@ -55,6 +58,28 @@ class RoleController extends Controller
         return redirect('/roles/admin-role-tab');
     }
 
+    public function edit(Role $role)
+    {
+        if ($role->id === 1) {
+            return redirect()->route('admin.roleTab')->with('warning', 'Administrator role cannot be edited.');
+        }
+    
+        $updateRoles = Role::where('is_active', 1)->get();
+        return view('components.admin.modal.admin-role-update', compact('updateRoles', 'role'));
+    }
+
+    public function update(Role $role, Request $request)
+    {
+        $data = $request->validate([
+            'name' => 'required',
+            'description' => 'required',
+
+        ]);
+        $role->update($data);
+
+        return redirect('/roles/admin-role-tab');
+    }
+
     /* *
      * Display the specified resource.
      *
@@ -72,31 +97,17 @@ class RoleController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function softDelete($id)
-    {
-        return Role::where('id', $id)
-        ->update([
-            'is_active' => 0
-        ]);
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, $id)
+    public function softDelete(Role $role, Request $request)
     {
         Role::where('id', $id)
         ->update([
-            'name' => $request->name,
-            'description' => $request->description,
+            'is_active' => 0
         ]);
 
         return redirect('/roles/admin-role-tab');
     }
+
+    
 
     /**
      * Remove the specified resource from storage.

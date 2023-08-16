@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -15,8 +16,18 @@ class UserController extends Controller
      */
     public function index()
     {
-        return User::all();
+        $userId = auth()->user()->name;
+        $roleId = auth()->user()->role_id;
+        $users = User::all();
 
+        if ($roleId == 1) {
+            $user = auth()->user();
+            $role = Role::find($roleId);
+
+            return view('components/admin/sidebar', compact('users', 'role', 'roleId', 'userID'));
+        } else {
+            return view('components/admin/sidebar', compact('users'));
+        }
         
     }
 

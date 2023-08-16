@@ -19,7 +19,7 @@ use App\Http\Middleware\RedirectIfAuthenticated;
 */
 
 Route::get('/', function () {
-    return view('auth/login')->name('loginPage');
+    return view('welcome');
 });
 
 /* Route::get('/dashboard', function () {
@@ -47,11 +47,13 @@ Route::middleware(['auth'])->controller(RoleController::class)->group(function (
 
     Route::post('/roles/store', 'store');
 
+    Route::get('/roles/{role}/edit', 'edit')->name('role.edit');
+
     Route::get('/roles/{id}', 'show')->whereNumber('id');
 
-    Route::get('/roles/{id}/softDelete', 'softDelete')->whereNumber('id');
+    Route::get('/roles/{id}/softDelete', 'softDelete')->name('role.softDelete');
 
-    Route::post('/roles/{id}/update', 'update')->whereNumber('id');
+    Route::put('/roles/{id}/update', 'update')->name('role.update');
 });
 
 Route::middleware(['auth'])->controller(ExpenseCategoryController::class)->group(function () {
