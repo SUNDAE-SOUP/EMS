@@ -17,7 +17,7 @@ class Expense_Category extends Model
         'is_active'
     ];
 
-    public function expense(): HasMany
+    public function expenses(): HasMany
     {
         return $this->hasMany(Expense::class);
     }

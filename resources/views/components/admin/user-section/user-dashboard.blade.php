@@ -1,5 +1,5 @@
 <x-admin.header />
-    <x-admin.sidebar />
+    <x-admin.user-sidebar />
     <div class="p-4 sm:ml-64">
         <div class="p-4 border-2 border-dashed rounded-lg dark:border-gray-700 mainContent">
             <div class="grid grid-cols-2 gap-4 mb-4">
@@ -38,15 +38,15 @@
                                     <p>No expenses available.</p>
                                 @endif
                                 @foreach ($expensesByCategory as $expense)
-                                <tr class="bg-white dark:bg-gray-800">
-                                    <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
-                                        {{ $expense->expense_category->expense_category_name }}
-                                    </th>
-                                    
-                                    <td class="px-6 py-4">
-                                        {{ $expense->totalAmount }}
-                                    </td>
-                                </tr>
+                                    <tr class="bg-white dark:bg-gray-800">
+                                        <th scope="row" class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">
+                                            {{ $expense->expense_category->expense_category_name }}
+                                        </th>
+                                        
+                                        <td class="px-6 py-4">
+                                            {{ $expense->totalAmount }}
+                                        </td>
+                                    </tr>
                                 @endforeach
                             </tbody>
                             
@@ -109,5 +109,4 @@
             
         </div>
     </div>
-
 <x-admin.footer />

@@ -18,20 +18,34 @@ class ExpenseController extends Controller
      */
     public function dashboard()
     {
-
-        $expensesTable = Expense::all();
+        $userId = auth()->user()->id;
 
         $expensesByCategory = Expense::selectRaw('expense_category_id, SUM(Amount) as totalAmount')
-        ->where('is_active', 1) //will display only  active expense
+        ->where('is_active', 1) // Display only active expenses
         ->groupBy('expense_category_id')
         ->with(['expense_category' => function ($query) {
             $query->select('id', 'expense_category_name'); // Select only the id and name columns from the related model
-
         }])
         ->get();
+        
+        if ($userId == 1) {
+            return view('components/admin/section/admin-dashboard', 
+            compact('expensesByCategory'));
+        } else {
+            return view('components/admin/user-section/user-dashboard',
+            compact('expensesByCategory'));
+        }
+        
+    }
 
-
-        return view('components/admin/section/admin-dashboard', compact('expensesByCategory', 'expensesTable'));
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function userExpenses()
+    {
+        return view('components/admin/user-section/user-expenses');
     }
     
     public function index()

@@ -38,12 +38,8 @@ class AuthenticatedSessionController extends Controller
 
         $roleIsActive = Role::where('id', $roleId)->value('is_active');
         
-        if ($is_active == 1 && $roleIsActive == 1) {
-            if ($roleId == 1) {
-                return redirect()->route('admin.view');
-            } else {
-                return redirect()->route('user.view');
-            }
+        if ($is_active == 1) {  
+            return redirect()->route('admin.view');
         } else {
             return redirect('/login');
         }
