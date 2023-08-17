@@ -44,16 +44,6 @@ class AuthenticatedSessionController extends Controller
             return redirect('/login');
         }
 
-
-        /* if ($roleId == 1) {
-            if ($is_active == 1) {
-                return redirect()->route('admin.view');
-            }
-        } else if ($roleId) {
-            if ($is_active == 1) {
-                return redirect()->route('user.view');
-            }
-        } */
         
     }
 

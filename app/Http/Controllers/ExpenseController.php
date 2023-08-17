@@ -50,10 +50,21 @@ class ExpenseController extends Controller
     
     public function index()
     {
-        $expenses = Expense::where('is_active', 1)->get();
-        $expenseCategories = Expense_Category::where('is_active', 1)->get();
+        $userId = auth()->user()->id;
+        $roleId = auth()->user()->role_id;
+        if ($roleId == 1) {
+            $expenses = Expense::where('is_active', 1)->get();
+            $expenseCategories = Expense_Category::where('is_active', 1)->get();
 
-        return view('components.admin.section.admin-expenses', compact('expenses', 'expenseCategories'));
+            return view('components.admin.section.admin-expenses', 
+            compact('expenses', 'expenseCategories'));
+        } else {
+            
+            $expenses = Expense::where('user_id', $userId)->get();
+
+            return view('components.admin.user-section.user-expenses', compact('expenses'));
+        }
+        
     }
 
     /**
@@ -163,22 +174,6 @@ class ExpenseController extends Controller
             return redirect(route('admin.expensesTab'))->with('success', 'Expense successfully updated');
         }
         
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-
-    
-    // to get the total sum per expense category in the expenses table
-    public function getTotalAmountSumByCategory($category_id)
-    {
-        
-        
-        return view('component/admin/section/admin-dashboard', compact('expensesByCategory'));
     }
 
     
