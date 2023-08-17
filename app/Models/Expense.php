@@ -18,7 +18,8 @@ class Expense extends Model
         'user_id',
         'expense_category_id',
         'amount',
-        'entry_date'
+        'entry_date',
+        'is-active'
     ];
 
     public function user(): BelongsTo

@@ -58,6 +58,12 @@ class RoleController extends Controller
         return redirect('/roles/admin-role-tab');
     }
 
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function edit(Role $role)
     {
         if ($role->id === 1) {
@@ -68,6 +74,13 @@ class RoleController extends Controller
         return view('components.admin.modal.admin-role-update', compact('updateRoles', 'role'));
     }
 
+    /**
+     * Update the specified resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
     public function update(Role $role, Request $request)
     {
         $data = $request->validate([
@@ -77,7 +90,7 @@ class RoleController extends Controller
         ]);
         $role->update($data);
 
-        return redirect('/roles/admin-role-tab');
+        return redirect(route('admin.roleTab'))->with('success', 'Role successfully updated');
     }
 
     /* *
@@ -99,12 +112,12 @@ class RoleController extends Controller
      */
     public function softDelete(Role $role, Request $request)
     {
-        Role::where('id', $id)
-        ->update([
+        
+        $role->update([
             'is_active' => 0
         ]);
 
-        return redirect('/roles/admin-role-tab');
+        return redirect(route('admin.roleTab'))->with('success', 'Role successfully deleted');
     }
 
     

@@ -1,6 +1,6 @@
 <aside id="sidebar-multi-level-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
     <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-        <p style="font-weight: 800; font-size:xx-large;">Purple Bug</p>
+        <p style="font-weight: 800; font-size:xx-large;">E.M.S.</p>
         <ul class="space-y-2 font-medium sidebarMenu">
             
             <p class="text-center" style="font-weight: 500;">{{ auth()->user()->name }} (<span style="font-style: italic;">{{ auth()->user()->role->name }}</span>)</p>
@@ -31,7 +31,7 @@
                         <a href="{{ route('admin.roleTab') }}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Roles</a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Users</a>
+                        <a href="{{ route('admin.userTab') }}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Users</a>
                     </li>
                 </ul>
             </li>
@@ -48,10 +48,10 @@
                 </button>
                 <ul id="dropdown-two" class="block py-2 space-y-2">
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Expense Categories</a>
+                        <a href="{{ route('admin.expenseCatTab') }}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Expense Categories</a>
                     </li>
                     <li>
-                        <a href="#" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Expenses</a>
+                        <a href="{{ route('admin.expensesTab') }}" class="flex items-center w-full p-2 text-gray-900 transition duration-75 rounded-lg pl-11 group hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700">Expenses</a>
                     </li>
                 </ul>
             </li>

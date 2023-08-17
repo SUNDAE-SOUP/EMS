@@ -33,13 +33,17 @@ require __DIR__.'/auth.php';
 Route::middleware(['auth'])->controller(UserController::class)->group(function () {
     Route::get('/users', 'index');
 
-    Route::post('/users/store', 'store');
+    Route::get('/users/admin-user-tab', 'adminUserTab')->name('admin.userTab');
+
+    Route::post('/users/store', 'store')->name('userAdmin.store');
+
+    Route::get('/users/{user}/edit', 'edit')->whereNumber('user')->name('userAdmin.edit');
 
     Route::get('/users/{id}', 'show')->whereNumber('id');
 
-    Route::get('/users/{id}/softDelete', 'softDelete')->whereNumber('id');
+    Route::put('/users/{user}/softDelete', 'softDelete')->whereNumber('user')->name('userAdmin.softDelete');
 
-    Route::put('/users/{id}/update', 'update')->whereNumber('id');
+    Route::put('/users/{user}/update', 'update')->whereNumber('user')->name('userAdmin.update');
 });
 
 Route::middleware(['auth'])->controller(RoleController::class)->group(function () {
@@ -47,36 +51,40 @@ Route::middleware(['auth'])->controller(RoleController::class)->group(function (
 
     Route::post('/roles/store', 'store');
 
-    Route::post('/roles/{role}/edit', 'edit')->whereNumber('role')->name('role.edit');
+    Route::get('/roles/{role}/edit', 'edit')->whereNumber('role')->name('role.edit');
 
     Route::get('/roles/{id}', 'show')->whereNumber('id');
 
-    Route::get('/roles/{id}/softDelete', 'softDelete')->name('role.softDelete');
+    Route::put('/roles/{role}/softDelete', 'softDelete')->whereNumber('role')->name('role.softDelete');
 
-    Route::put('/roles/{id}/update', 'update')->name('role.update');
+    Route::put('/roles/{role}/update', 'update')->whereNumber('role')->name('role.update');
 });
 
 Route::middleware(['auth'])->controller(ExpenseCategoryController::class)->group(function () {
-    Route::get('/expenseCategories', 'index');
+    Route::get('/expenseCategories', 'index')->name('admin.expenseCatTab');
 
     Route::post('/expenseCategories/store', 'store');
 
-    Route::get('/expenseCategories/{id}/softDelete', 'softDelete')->whereNumber('id');
+    Route::get('/expenseCategories/{expenseCategory}/edit', 'edit')->whereNumber('expenseCategory')->name('expenseCategory.edit');
 
-    Route::put('/expenseCategories/{id}/update', 'update')->whereNumber('id');
+    Route::put('/expenseCategories/{expenseCategory}/softDelete', 'softDelete')->whereNumber('expenseCategory')->name('expenseCategory.softDelete');
+
+    Route::put('/expenseCategories/{expenseCategory}/update', 'update')->whereNumber('expenseCategory')->name('expenseCategory.update');
 });
 
 Route::middleware(['auth'])->controller(ExpenseController::class)->group(function () {
-    Route::get('/expenses', 'index');
+    Route::get('/expenses', 'index')->name('admin.expensesTab');
 
     Route::get('/expenses/adminView', 'dashboard')->name('admin.view');
 
     Route::post('/expenses/store', 'store');
 
+    Route::get('/expenses/{expense}/edit', 'edit')->whereNumber('expense')->name('expense.edit');
+
     Route::get('/expenses/{user_id}', 'show')->whereNumber('user_id');
 
-    Route::get('/expenses/{id}/softDelete', 'softDelete')->whereNumber('id');
+    Route::put('/expenses/{expense}/softDelete', 'softDelete')->whereNumber('expense')->name('expense.softDelete');
 
-    Route::put('/expenses/{id}/update', 'update')->whereNumber('id');
+    Route::put('/expenses/{expense}/update', 'update')->whereNumber('expense')->name('expense.update');
 
 });

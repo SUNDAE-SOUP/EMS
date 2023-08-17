@@ -5,7 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Role;
-use Illuminate\Support\Facades\Hash;
+
+
 
 class UserController extends Controller
 {
@@ -32,13 +33,27 @@ class UserController extends Controller
     }
 
     /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function adminUserTab()
+    {
+        $users = User::where('is_active', 1)->get();
+        $roles = Role::where('is_active', 1)->get();
+
+        return view('components.admin.section.admin-users', compact('users', 'roles'));
+        
+    }
+
+    /**
      * Show the form for creating a new resource.
      *
      * @return \Illuminate\Http\Response
      */
     public function create()
     {
-        $roles = app('App\Http\Controller\RoleController')->index();
+        //
     }
 
     /**
@@ -51,17 +66,40 @@ class UserController extends Controller
     {
         $validate = $request->validate([
             'name' => 'required',
-            'email' => ['required', 'email', Rule::unique('users', 'email')],
-            'password' => 'required'
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'role_id' => 'required'
+            
         ]);
         
-        return User::create([
+        User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role_id' => $request->role_id=2
+            'role_id' => $request->role_id
         ]);
+
+        return redirect(route('admin.userTab'))->with('success', 'User successfully added');
     }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(User $user)
+    {
+        if ($user->role_id == 1) {
+            return redirect('/users/admin-user-tab')->with('warning', 'Administrator cannot be edited.');
+        }
+
+        $roles = Role::where('is_active', 1)->get();
+    
+        $updateUsers = User::where('is_active', 1)->get();
+
+        return view('components.admin.modal.admin-user-update', compact('updateUsers', 'user', 'roles'));
+    }
+
+    
 
     /**
      * Display the specified resource.
@@ -80,13 +118,16 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function softDelete($id)
+    public function softDelete(User $user, Request $request)
     {
-        return User::where('id', $id)
-        ->update([
-            
-            'is_active' => 0
-        ]);
+
+        if ($user->is_active == 1) {
+            $user->is_active = 0;
+            $user->save();
+        }
+        
+
+        return redirect(route('admin.userTab'))->with('success', 'User successfully deleted');
     }
 
     /**
@@ -96,14 +137,17 @@ class UserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(User $user, Request $request)
     {
-        return User::where('id', $id)
-        ->update([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role_id' => $request->role_id
+
+        $data = $request->validate([
+            'name' => 'required',
+            'email' => 'required',
+            'role_id' => 'required'
         ]);
+        $user->update($data);
+
+        return redirect(route('admin.userTab'))->with('success', 'User successfully updated');
     }
 
     /**
@@ -116,4 +160,6 @@ class UserController extends Controller
     {
         ddd('yow this is destroy');
     }
+
+    //{{route('userAdmin.edit', ['user'=> $user])}}
 }

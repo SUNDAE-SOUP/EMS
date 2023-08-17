@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Expense;
+use App\Models\User;
 use App\Models\Expense_Category;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\DB;
@@ -21,13 +22,13 @@ class ExpenseController extends Controller
         $expensesTable = Expense::all();
 
         $expensesByCategory = Expense::selectRaw('expense_category_id, SUM(Amount) as totalAmount')
+        ->where('is_active', 1) //will display only  active expense
         ->groupBy('expense_category_id')
         ->with(['expense_category' => function ($query) {
             $query->select('id', 'expense_category_name'); // Select only the id and name columns from the related model
+
         }])
         ->get();
-
-
 
 
         return view('components/admin/section/admin-dashboard', compact('expensesByCategory', 'expensesTable'));
@@ -35,7 +36,10 @@ class ExpenseController extends Controller
     
     public function index()
     {
-        return Expense::all();
+        $expenses = Expense::where('is_active', 1)->get();
+        $expenseCategories = Expense_Category::where('is_active', 1)->get();
+
+        return view('components.admin.section.admin-expenses', compact('expenses', 'expenseCategories'));
     }
 
     /**
@@ -57,18 +61,40 @@ class ExpenseController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'expense_category_id' => ['required', Rule::exists('expense_catgories', 'id')],
+            'expense_category_id' => 'required',
             'amount' => 'required',
             'entry_date' => 'required'
         ]);
 
 
-        return Expense::create([
+        Expense::create([
             'user_id' => auth()->user()->id,
             'expense_category_id' => $request->expense_category_id,
             'amount' => $request->amount,
             'entry_date' => $request->entry_date
         ]);
+
+        return redirect(route('admin.expensesTab'))->with('success', 'Expense successfully added');
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     *
+     * @param  int  $id
+     * @return \Illuminate\Http\Response
+     */
+    public function edit(Expense $expense)
+    {
+        $userRoleId = auth()->user()->role_id;
+        $expenseLists = Expense::where('is_active', 1)->get();
+        $expenseCategories = Expense_Category::where('is_active', 1)->get();
+
+        if ($userRoleId == 1) {
+            return view('components.admin.modal.admin-expenses-update', compact('expenseLists', 'expenseCategories', 'expense'));
+        }
+        
+
+        
     }
 
     /**
@@ -88,13 +114,17 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function softDelete($id)
+    public function softDelete(Expense $expense, Request $request)
     {
-        return Expense::where('id', $id)
-        ->update([
-            
-            'is_active' => 0
-        ]);
+        if ($expense->is_active ==1) {
+            $expense->is_active = 0;
+            $expense->save();
+        }
+
+        $userRoleId = auth()->user()->role_id;
+        if ($userRoleId == 1) {
+            return redirect(route('admin.expensesTab'))->with('success', 'Expense successfully deleted');
+        }
     }
 
     /**
@@ -104,14 +134,21 @@ class ExpenseController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $_id)
+    public function update(Expense $expense, Request $request)
     {
-        return Expense::where('id', $id)
-        ->update([
-            'expense_category_id' => $request->expense_category_id,
-            'amount' => $request->amount,
-            'entry_date' => $request->entry_date
+        $userRoleId = auth()->user()->role_id;
+
+        $data = $request->validate([
+            'expense_category_id' => 'required',
+            'amount' => 'required',
+            'entry_date' => 'required'
         ]);
+        $expense->update($data);
+
+        if ($userRoleId == 1) {
+            return redirect(route('admin.expensesTab'))->with('success', 'Expense successfully updated');
+        }
+        
     }
 
     /**

@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Http\Controllers\Auth;
-
+use App\Models\Role;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Providers\RouteServiceProvider;
@@ -36,17 +36,28 @@ class AuthenticatedSessionController extends Controller
 
         $is_active = auth()->user()->is_active;
 
+        $roleIsActive = Role::where('id', $roleId)->value('is_active');
         
+        if ($is_active == 1 && $roleIsActive == 1) {
+            if ($roleId == 1) {
+                return redirect()->route('admin.view');
+            } else {
+                return redirect()->route('user.view');
+            }
+        } else {
+            return redirect('/login');
+        }
 
-        if ($roleId == 1) {
+
+        /* if ($roleId == 1) {
             if ($is_active == 1) {
                 return redirect()->route('admin.view');
             }
-        } else if ($roleId == 2) {
+        } else if ($roleId) {
             if ($is_active == 1) {
                 return redirect()->route('user.view');
             }
-        }
+        } */
         
     }
 

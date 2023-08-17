@@ -14,7 +14,9 @@ class ExpenseCategoryController extends Controller
      */
     public function index()
     {
-        return Expense_Category::all();
+        $expenseCategories = Expense_Category::where('is_active', 1)->get();
+
+        return view('components.admin.section.admin-expenseCategories', compact('expenseCategories'));
     }
 
     /**
@@ -41,10 +43,20 @@ class ExpenseCategoryController extends Controller
         ]);
 
 
-        return Expense_Category::create([
+        Expense_Category::create([
             'expense_category_name' => $request->expense_category_name,
             'description' => $request->description,
         ]);
+
+        return redirect(route('admin.expenseCatTab'))->with('success', 'Expense Category successfully added');
+    }
+
+    public function edit(Expense_Category $expenseCategory)
+    {
+    
+        $updateExpenseCategories = Expense_Category::where('is_active', 1)->get();
+
+        return view('components.admin.modal.admin-expense-category-update', compact('updateExpenseCategories', 'expenseCategory'));
     }
 
     /**
@@ -64,13 +76,12 @@ class ExpenseCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function softDelete($id)
+    public function softDelete(Expense_Category $expenseCategory, Request $request)
     {
-        return Expense_Category::where('id', $id)
-        ->update([
-            
+        $expenseCategory->update([ 
             'is_active' => 0
         ]);
+        return redirect(route('admin.expenseCatTab'))->with('success', 'Expense Category successfully deleted');
     }
 
     /**
@@ -80,13 +91,16 @@ class ExpenseCategoryController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Expense_Category $expenseCategory, Request $request)
     {
-        return Expense_Category::where('id', $id)
-        ->update([
-            'expense_category_name' => $request->expense_category_name,
-            'description' => $request->description, 
+        $data = $request->validate([
+           'expense_category_name' => 'required',
+           'description' => 'required' 
         ]);
+
+        $expenseCategory->update($data);
+
+        return redirect(route('admin.expenseCatTab'))->with('success', 'Expense Category is successfully updated');
     }
 
     /**
