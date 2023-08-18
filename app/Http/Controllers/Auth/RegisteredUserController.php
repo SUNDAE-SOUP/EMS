@@ -34,22 +34,25 @@ class RegisteredUserController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'email' => ['required', 'string', 'email'],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password)
-        ]);
-
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return redirect(RouteServiceProvider::HOME);
+        
+        $user = User::where('email', $request->email)->where('is_active', 1)->firstOrFail();
+        
+        if ($user) {
+            $user->update([
+            'password' => Hash::make($request->password),
+            ]);
+            
+            Auth::login($user);
+            
+            return redirect('/expenses/adminView')->with('success', 'Registration successful. Welcome');
+        } else {
+            return redirect('/login')->with('warning', 'Your account is not active.');
+        }
+        
+        
     }
 
     

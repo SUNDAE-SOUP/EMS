@@ -19,6 +19,7 @@ class ExpenseController extends Controller
     public function dashboard()
     {
         $userId = auth()->user()->id;
+        $roleId = auth()->user()->role_id;
 
         $expensesByCategory = Expense::selectRaw('expense_category_id, SUM(Amount) as totalAmount')
         ->where('is_active', 1) // Display only active expenses
@@ -28,7 +29,7 @@ class ExpenseController extends Controller
         }])
         ->get();
         
-        if ($userId == 1) {
+        if ($roleId == 1) {
             return view('components/admin/section/admin-dashboard', 
             compact('expensesByCategory'));
         } else {
@@ -38,31 +39,28 @@ class ExpenseController extends Controller
         
     }
 
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function userExpenses()
-    {
-        return view('components/admin/user-section/user-expenses');
-    }
+    
     
     public function index()
     {
         $userId = auth()->user()->id;
         $roleId = auth()->user()->role_id;
-        if ($roleId == 1) {
-            $expenses = Expense::where('is_active', 1)->get();
-            $expenseCategories = Expense_Category::where('is_active', 1)->get();
 
+        $expenses = Expense::where('user_id', $userId)
+        ->where('is_active', 1)
+        ->get();
+
+        $expenseCategories = Expense_Category::where('is_active', 1)->get();
+
+        if ($roleId == 1) {
+            
             return view('components.admin.section.admin-expenses', 
             compact('expenses', 'expenseCategories'));
-        } else {
-            
-            $expenses = Expense::where('user_id', $userId)->get();
 
-            return view('components.admin.user-section.user-expenses', compact('expenses'));
+        } else {
+
+            return view('components.admin.user-section.user-expenses', 
+            compact('expenses', 'expenseCategories'));
         }
         
     }
@@ -110,12 +108,18 @@ class ExpenseController extends Controller
      */
     public function edit(Expense $expense)
     {
-        $userRoleId = auth()->user()->role_id;
-        $expenseLists = Expense::where('is_active', 1)->get();
+        $roleId = auth()->user()->role_id;
+        $userId = auth()->user()->id;
+        $expenseLists = Expense::where('user_id', $userId)
+        ->where('is_active', 1)
+        ->get();
+
         $expenseCategories = Expense_Category::where('is_active', 1)->get();
 
-        if ($userRoleId == 1) {
+        if ($roleId == 1) {
             return view('components.admin.modal.admin-expenses-update', compact('expenseLists', 'expenseCategories', 'expense'));
+        } else {
+            return view('components.admin.modal.user-expenses-update', compact('expenseLists', 'expenseCategories', 'expense'));
         }
         
 
@@ -146,10 +150,7 @@ class ExpenseController extends Controller
             $expense->save();
         }
 
-        $userRoleId = auth()->user()->role_id;
-        if ($userRoleId == 1) {
-            return redirect(route('admin.expensesTab'))->with('success', 'Expense successfully deleted');
-        }
+        return redirect(route('admin.expensesTab'))->with('success', 'Expense successfully deleted');
     }
 
     /**
@@ -170,9 +171,9 @@ class ExpenseController extends Controller
         ]);
         $expense->update($data);
 
-        if ($userRoleId == 1) {
-            return redirect(route('admin.expensesTab'))->with('success', 'Expense successfully updated');
-        }
+        
+        return redirect(route('admin.expensesTab'))->with('success', 'Expense successfully updated');
+        
         
     }
 

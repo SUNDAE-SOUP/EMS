@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Role;
 
@@ -39,10 +41,20 @@ class UserController extends Controller
      */
     public function adminUserTab()
     {
-        $users = User::where('is_active', 1)->get();
-        $roles = Role::where('is_active', 1)->get();
+        $roleId = auth()->user()->role_id;
+        if ($roleId == 1) {
+            $users = User::where('is_active', 1)->get();
+            $roles = Role::where('is_active', 1)->get();
+            return view('components.admin.section.admin-users', 
+            compact('users', 'roles'));
+        } else {
+            $currentUser = auth()->user();
+            return view('components.admin.user-section.user-change-password',
+            compact('currentUser'));
+        }
+        
 
-        return view('components.admin.section.admin-users', compact('users', 'roles'));
+        
         
     }
 
@@ -64,21 +76,45 @@ class UserController extends Controller
      */
     public function store(Request $request)
     {
-        $validate = $request->validate([
+        $roleId = auth()->user()->role_id;
+
+        if ($roleId == 1) {
+            $validate = $request->validate([
             'name' => 'required',
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'role_id' => 'required'
             
-        ]);
-        
-        User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'role_id' => $request->role_id
-        ]);
+            ]);
+            
+            User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'role_id' => $request->role_id
+            ]);
 
-        return redirect(route('admin.userTab'))->with('success', 'User successfully added');
+            return redirect(route('admin.userTab'))->with('success', 'User successfully added');
+        } else {
+            $request->validate([
+                'current_password' => ['required', 'string'],
+                'password' => ['required', 'confirmed']
+            ]);
+    
+            $currentPasswordStatus = Hash::check($request->current_password, auth()->user()->password);
+            if ($currentPasswordStatus) {
+                User::findOrFail(Auth::user()->id)->update([
+                    'password' => Hash::make($request->password)
+                ]);
+                return redirect(route('admin.userTab'))->with('success', 'Password successfully changed');
+            } else {
+                return redirect(route('admin.userTab'))->with('warning', 'Current Password does not match with Old Password');
+            }
+        }
+        
+        
+        
+        
     }
+
 
     /**
      * Show the form for editing the specified resource.
@@ -88,15 +124,17 @@ class UserController extends Controller
      */
     public function edit(User $user)
     {
+        
         if ($user->role_id == 1) {
             return redirect('/users/admin-user-tab')->with('warning', 'Administrator cannot be edited.');
-        }
-
-        $roles = Role::where('is_active', 1)->get();
+        } else {
+            $roles = Role::where('is_active', 1)->get();
     
-        $updateUsers = User::where('is_active', 1)->get();
-
-        return view('components.admin.modal.admin-user-update', compact('updateUsers', 'user', 'roles'));
+            $updateUsers = User::where('is_active', 1)->get();
+    
+            return view('components.admin.modal.admin-user-update', compact('updateUsers', 'user', 'roles'));
+        }   
+           
     }
 
     
@@ -139,15 +177,19 @@ class UserController extends Controller
      */
     public function update(User $user, Request $request)
     {
-
+        
         $data = $request->validate([
             'name' => 'required',
             'email' => 'required',
             'role_id' => 'required'
         ]);
         $user->update($data);
-
         return redirect(route('admin.userTab'))->with('success', 'User successfully updated');
+       
+
+        
+
+        
     }
 
     /**
@@ -161,5 +203,5 @@ class UserController extends Controller
         ddd('yow this is destroy');
     }
 
-    //{{route('userAdmin.edit', ['user'=> $user])}}
+    
 }
