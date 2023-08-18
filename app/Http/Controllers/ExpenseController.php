@@ -23,6 +23,7 @@ class ExpenseController extends Controller
 
         $expensesByCategory = Expense::selectRaw('expense_category_id, SUM(Amount) as totalAmount')
         ->where('is_active', 1) // Display only active expenses
+        ->where('user_id', $userId) //Display only expense of the current user
         ->groupBy('expense_category_id')
         ->with(['expense_category' => function ($query) {
             $query->select('id', 'expense_category_name'); // Select only the id and name columns from the related model
