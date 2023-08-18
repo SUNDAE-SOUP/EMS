@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 
 class UsersTableSeeder extends Seeder
 {
@@ -19,7 +20,8 @@ class UsersTableSeeder extends Seeder
             'name' => 'Puple Bug',
             'email' => 'purple.bug@purplebug.com',
             'role_id' => 1,
-            'password' => Hash::make('password'),   
+            'password' => Hash::make('purplebug'),
+            'email_verified_at' => now(),   
         ]);
     }
 }
