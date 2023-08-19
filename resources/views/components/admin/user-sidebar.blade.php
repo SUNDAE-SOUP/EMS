@@ -1,6 +1,6 @@
 <aside id="sidebar-multi-level-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0" aria-label="Sidebar">
     <div class="h-full px-3 py-4 overflow-y-auto bg-gray-50 dark:bg-gray-800">
-        <p style="font-weight: 800; font-size:xx-large;">LOGO</p>
+        <p style="font-weight: 800; font-size:xx-large;">E.M.S.</p>
         <ul class="space-y-2 font-medium sidebarMenu">
             <p class="text-center" style="font-weight: 500;">{{ auth()->user()->name }} (<span style="font-style: italic;">{{ auth()->user()->role->name }}</span>)</p>
             <hr>
