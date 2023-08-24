@@ -18,11 +18,18 @@ class RoleController extends Controller
     public function roleTab()
     {
         
+        $roleId = auth()->user()->role_id;
+
+        if ( $roleId == 1) {
+            $roles = Role::where('is_active', 1)->get();
+
+            return view('components.admin.section.admin-roles', compact('roles'));
+        } else {
+            return view('components/admin/user-section/user-dashboard')
+            ->with('warning', 'You are not an Administrator');
+        }
         
-
-        $roles = Role::where('is_active', 1)->get();
-
-        return view('components.admin.section.admin-roles', compact('roles'));
+        
     }
 
 
@@ -44,6 +51,7 @@ class RoleController extends Controller
      */
     public function store(Request $request)
     {
+        
         $validated = $request->validate([
             'name' => 'required',
             'description' => 'required'

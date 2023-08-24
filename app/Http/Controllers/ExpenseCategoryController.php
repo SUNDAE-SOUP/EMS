@@ -14,9 +14,16 @@ class ExpenseCategoryController extends Controller
      */
     public function index()
     {
-        $expenseCategories = Expense_Category::where('is_active', 1)->get();
+        $roleId = auth()->user()->role_id;
+        if ($roleId == 1) {
+            $expenseCategories = Expense_Category::where('is_active', 1)->get();
 
-        return view('components.admin.section.admin-expenseCategories', compact('expenseCategories'));
+            return view('components.admin.section.admin-expenseCategories', compact('expenseCategories'));
+        } else {
+            return view('components/admin/user-section/user-dashboard')
+            ->with('warning', 'You are not an Administrator');
+        }
+        
     }
 
     /**
